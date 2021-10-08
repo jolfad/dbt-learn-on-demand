@@ -1,15 +1,16 @@
 SELECT 
 a.order_id,
 a.customer_id,
-b.amount
+b.amount,
+a.order_date
 FROM
-analytics.dbt_jfadare.stg_orders a 
+{{ ref('stg_orders')}} a 
 LEFT JOIN
 (SELECT 
-orderid, 
+order_id, 
 status,
 sum(amount) AS amount 
-FROM analytics.dbt_jfadare.stg_payments
+FROM {{ ref('stg_payments')}}
 GROUP BY 1,2) b
-ON a.order_id=b.ORDERID
+ON a.order_id=b.order_id
 AND b.status='success'
